@@ -6,6 +6,8 @@
 .global asm_sum
 .global asm_svc
 .global asm_zeros
+.global asm_productoEscalar32
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -64,4 +66,29 @@
         bne .loop_zeros @ Realiza el salto mientras el flag z!=0, esto lo determina la instrucción anterior
 
         bx lr           @ para realizar un salto hacia afuera
-    
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   void asm_productoEscalar32 (uint32_t * vectorIn, uint32_t * vectorOut, 
+@                               uint32_t longitud, uint32_t escalar);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@   r2: logitud
+@   r3: escalar
+
+.thumb_func
+    asm_productoEscalar32:
+    push {r4} @preserva r4
+
+@ Realizo un loop decrementando el valor de longitud
+    .loop_pe32:        @ etiqueta para el salto  
+        ldr r4,[r0],4  @ r4 = *r0 ; r0+=4 o r4 = *vectorIn++
+        mul r4,r3      @ r4 = r4 * r3 | r4 = *vectorIn * escalar
+        str r4,[r1],4  @ *vectorOut++ = r4
+        subs r2,1      @ --longitud
+        bne .loop_pe32
+
+    pop {r4} @restablece r4
+    bx lr           @ para realizar un salto hacia afuera

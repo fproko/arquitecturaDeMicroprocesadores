@@ -28,6 +28,17 @@ void SysTick_Handler (void)
     ++ s_ticks;
 }
 
+static void productoEscalar32(void)
+{
+    uint32_t vectorIn1[8] = {1,2,3,4,5,6,7,8};
+    uint32_t vectorOut1[8] = {0,0,0,0,0,0,0,0};
+    uint32_t vectorIn2[8] = {1,2,3,4,5,6,7,8};
+    uint32_t vectorOut2[8] = {0,0,0,0,0,0,0,0};
+
+    asm_productoEscalar32(vectorIn1,vectorOut1,8,3);
+    c_productoEscalar32(vectorIn2,vectorOut2,8,3);
+}
+
 static void Zeros(void)
 {
     uint32_t vector1[8] = {(u_int32_t)-1, (u_int32_t)-2, (u_int32_t)-3,
@@ -157,7 +168,9 @@ int main (void)
 {
     Inicio ();
 
-    Zeros();
+    //Zeros(); //Ejercicio 1
+
+    productoEscalar32(); //Ejercicio 2
 
     //Suma ();
 
