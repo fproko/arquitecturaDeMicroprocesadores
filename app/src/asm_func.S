@@ -110,13 +110,12 @@
     push {r4} @preserva r4
 
 @ Realizo un loop decrementando el valor de longitud
-    .loop_pe16:        @ etiqueta para el salto
+    .loop_pe16:         @ etiqueta para el salto
         ldrh r4,[r0],2  @ r4 = *r0 ; r0+=2 o r4 = *vectorIn++
-        mul r4,r3      @ r4 = r4 * r3 | r4 = *vectorIn * escalar
+        mul r4,r3       @ r4 = r4 * r3 | r4 = *vectorIn * escalar
         strh r4,[r1],2  @ *vectorOut++ = r4
-        subs r2,1      @ --longitud
+        subs r2,1       @ --longitud
         bne .loop_pe16
 
-    pop {r4} @restablece r4
-    bx lr           @ para realizar un salto hacia afuera
-
+    pop {r4}            @restablece r4
+    bx lr               @ para realizar un salto hacia afuera

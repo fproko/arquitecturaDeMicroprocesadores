@@ -28,6 +28,17 @@ void SysTick_Handler (void)
     ++ s_ticks;
 }
 
+static void productoEscalar16(void)
+{
+    uint16_t vectorIn1[8] = {1,2,3,4,5,6,7,8};
+    uint16_t vectorOut1[8] = {0,0,0,0,0,0,0,0};
+    uint16_t vectorIn2[8] = {1,2,3,4,5,6,7,8};
+    uint16_t vectorOut2[8] = {0,0,0,0,0,0,0,0};
+
+    asm_productoEscalar16(vectorIn1,vectorOut1,8,3);
+    c_productoEscalar16(vectorIn2,vectorOut2,8,3);
+}
+
 static void productoEscalar32(void)
 {
     uint32_t vectorIn1[8] = {1,2,3,4,5,6,7,8};
@@ -170,7 +181,9 @@ int main (void)
 
     //Zeros(); //Ejercicio 1
 
-    productoEscalar32(); //Ejercicio 2
+    //productoEscalar32(); //Ejercicio 2
+
+    productoEscalar16(); //Ejercicio 3
 
     //Suma ();
 

@@ -21,3 +21,16 @@ void c_productoEscalar32(uint32_t *vectorIn, uint32_t *vectorOut, uint32_t longi
         vectorOut[i] = vectorIn[i] * escalar;
     }
 }
+
+void c_productoEscalar16(uint16_t *vectorIn, uint16_t *vectorOut, uint32_t longitud, uint16_t escalar)
+{
+    if (!vectorIn || !vectorOut || !longitud) //Verifico que no sean cero
+    {
+        return;
+    }
+
+    for (uint32_t i = 0; i < longitud; i++)
+    {
+        vectorOut[i] = vectorIn[i] * escalar;
+    }
+}
