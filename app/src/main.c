@@ -32,11 +32,12 @@ static void productoEscalar12(void)
 {
     uint16_t vectorIn1[8] = {1,2,3,4,5,6,7,8};
     uint16_t vectorOut1[8] = {0,0,0,0,0,0,0,0};
-    uint16_t vectorIn2[8] = {1,2,3,4,5,6,7,8};
     uint16_t vectorOut2[8] = {0,0,0,0,0,0,0,0};
+    uint16_t vectorOut3[8] = {0,0,0,0,0,0,0,0};
 
     asm_productoEscalar12(vectorIn1,vectorOut1,8,1000);
-    c_productoEscalar12(vectorIn2,vectorOut2,8,1000);
+    asm_productoEscalar12_sat(vectorIn1,vectorOut2,8,1000);
+    c_productoEscalar12(vectorIn1,vectorOut2,8,1000);
 }
 
 static void productoEscalar16(void)

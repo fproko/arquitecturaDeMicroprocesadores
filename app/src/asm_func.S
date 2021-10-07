@@ -9,6 +9,7 @@
 .global asm_productoEscalar32
 .global asm_productoEscalar16
 .global asm_productoEscalar12
+.global asm_productoEscalar12_sat
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -149,4 +150,30 @@
         subs r2,1       @ --longitud
         bne .loop_pe12
     pop {r4-r5}            @restablece r4-r5
+    bx lr               @ para realizar un salto hacia afuera
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   void asm_productoEscalar12_sat (uint16_t * vectorIn, uint16_t * vectorOut,
+@								uint32_t longitud, uint16_t escalar);
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@   r2: logitud
+@   r3: escalar
+
+.thumb_func
+    asm_productoEscalar12_sat:
+    push {r4} @preserva r4
+
+@ Realizo un loop decrementando el valor de longitud
+    .loop_pe12_sat:         @ etiqueta para el salto
+        ldrh r4,[r0],2  @ r4 = *r0 ; r0+=2 o r4 = *vectorIn++
+        mul r4,r3       @ r4 = r4 * r3 | r4 = *vectorIn * escalar
+        usat r4,12,r4   @ Satura sin signo a la posicion 12
+        strh r4,[r1],2  @ *vectorOut++ = r4
+        subs r2,1       @ --longitud
+        bne .loop_pe12_sat
+    pop {r4}            @restablece r4
     bx lr               @ para realizar un salto hacia afuera
