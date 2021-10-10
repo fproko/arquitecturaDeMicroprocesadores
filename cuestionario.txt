@@ -1,0 +1,46 @@
+Preguntas orientadoras
+=======================
+
+1. Describa brevemente los diferentes perfiles de familias de microprocesadores/microcontroladores de ARM. Explique alguna de sus diferencias características.
+
+    Existen 3 clasificaciones de la familia ARM: 
+
+    * Cortex A (Application): son procesadores de alto rendimiento orientados a la implementación de sistemas operativos en sistemas embebidos de alta performance. Se encuentra en celulares, tablets, etc. 
+    
+    * Cortex R (Real time): son procesadores orientados a sistemas de tiempo real donde se nesecita implementar soluciones de baja latencia y alta capacidad de procesamiento.
+    
+    * Cortex M (Microcontrollers): son procesadores optimizados para circuitos integrados de bajo costo y eficiencia energética.
+
+Cortex M
+========
+
+1. Describa brevemente las diferencias entre las familias de procesadores Cortex M0, M3 y M4.
+
+    *Cortex M0 / M0+: Implementación mínima para bajo consumo y bajo costo. Arquitectura Von Neumann (ARMv6-M). 
+
+    *Cortex M3: Microcontrolador de propósito general. Arquitectura Harvard (ARMv7-M).
+
+    *Cortex M4: Mayor performance, ejecución de instrucciones de punto flotante, agregan funcionalidades para procesamiento digital de señales, unidad de protección de memoria, etc. Arquitectura Harvard (ARMv7E-M).
+    
+2. ¿Por qué se dice que el set de instrucciones Thumb permite mayor densidad de código? Explique.
+    
+    Originalmente los procesadores ARM como el ARM7TDMI tenian dos set de instrucciones, un set instrucciones ARM de 32 bits y un set de instrucciones Thumb de 16 bits. Para trabajar con una u otra había que realizar un cambio de contexto. Con la introducción de la tecnología Thumb-2, el set de instrucciones Thumb fue extendido para soportar una mezcla de instrucciones de 16 bits y de 32 bits. Esto permite realizar todos los procesamientos requeridos sin requerir un cambio de contexto. Con Thumb-2 el ensamblador cuando es posible utiliza instrucciones de 16 bits, por lo cuál se necesita un tamaño de programa más pequeño, lo que genera una mayor densidad de código.
+    
+3. ¿Qué entiende por arquitectura load-store? ¿Qué tipo de instrucciones no posee este tipo de arquitectura?
+
+    En la arquitectura load-store los datos en la memoria para ser procesados, deben cargarse desde la memoria a los registros en el banco de registros, procesarse dentro del procesador y luego volver a escribirse en la memoria, si es necesario. Todo esto utilizando un número de instrucciones separadas. 
+    Esta arquitectura no posee instrucciones que modifiquen directamente la memoria.
+    
+4. ¿Cómo es el mapa de memoria de la familia?
+    
+    El mapa de memoria de la familia es un único espacio de memoria plano de 4 GB.
+
+5. ¿Qué ventajas presenta el uso de los “shadowed pointers” del PSP y el MSP?
+
+    Los procesadores Cortex-M están diseñados para soportar sistemas operativos, por eso están disponibles dos stack pointers separados. El MSP es utilizado para el núcleo del sistemas operativo y para el manejo de interrupciones. El PSP es utilizado para las tareas de la aplicación, y cada tarea tiene su propio stack. Esto permite las siguientes ventajas:
+    
+    * Si se corrompe el stack de una tarea, es probable que el stack utilizado por el kernel del SO y el utilizado por otras tareas se encuentre intacto, lo que mejora la confiabilidad del sistema.
+    
+    * El espacio de stack para cada tarea solamente necesita cubrir el máximo uso de stack más un nivel de stack frame. Ya que el espacio de stack que se necesita para una ISR y el manejo de interrupciones anidadas se encuentra asignado solamente en el stack principal
+    
+    * Un SO también puede utilizar la MPU para definir la región del stack que puede usar una tarea de una aplicación. Si ocurre un problema de desbordamiento de stack, la MPU puede activar una excepción de falla MemManage y evitar que la tarea sobrescriba regiones de memoria fuera del espacio de stack asignado para esta tarea.
