@@ -68,8 +68,7 @@ Cortex M
 7. ¿Qué se entiende por modelo de registros ortogonal? Dé un ejemplo
 
     En una arquitectura ortogonal cualquier instrucción puede utilizar cualquier registro de la arquitectura como fuente o destino.
-
-    Un set de instrucciones es ortogonal cuando las instrucciones pueden combinar operaciones, tipos de datos y modos de direccionamiento sin restricciones.
+    Por ejemplo una instrucción ORR puede operar con cualquier par de registros.
     
 8. ¿Qué ventajas presenta el uso de instrucciones de ejecución condicional (IT)? Dé un ejemplo
     
@@ -115,4 +114,43 @@ Cortex M
 
 15. Cuando ocurre una interrupción, asumiendo que está habilitada ¿Cómo opera el microprocesador para atender a la subrutina correspondiente? Explique con un ejemplo
     
-    Cuando ocurre una excepción el procesador guarda los registros R0 a R3, R12, PC, PSR y LR en el stack. Luego se ingresa al handler de excepción, se carga LR con un valor especial que no corresponde a una posición valida de memoria. Cuando se ejecuta la instrucción de retorno el procesador identifica que se trata de un retorno de excepción y recupera del stack los registros guardados.
+    Cuando ocurre una excepción el procesador guarda los registros R0 a R3, R12, Return Adress, PSR y LR en el stack. Luego se ingresa al handler de excepción, se carga LR con un valor especial EXEC_RETURN que no corresponde a una posición valida de memoria. Cuando se ejecuta la instrucción de retorno el procesador identifica que se trata de un retorno de excepción y recupera del stack los registros guardados.
+    
+17. ¿Cómo cambia la operación de stacking al utilizar la unidad de punto flotante?
+    
+    Cuando la FPU se encuentra desactivada se guarda en el stack 8 palabras (R0 a R3, R12, Return Adress, PSR y LR), y este proceso demora 12 ciclos de reloj. Cuando la FPU se encuentra activada se guarda además el contexto de la FPU, es decir el registro de estado del FPU FPSCR y los registros S0 a S15. Esto da un total de 26 palabras y 29 ciclos de reloj.
+    
+16. Explique las características avanzadas de atención a interrupciones: tail chaining y late arrival.
+    
+    Tail chaining: se da cuando se está ejecutando una interrupción y ocurre otra de igual o mayor prioridad. Al finalizar la ejecución de la primera interrupción no se vuelve al modo Thread, para evitar volver a realizar el stacking, si no que el procesador se mantiene en modo handler y continua ejecutando la segunda interrupción. Para un sistema de memoria sin un estado de espera, el tail-chain tiene una latencia de 6 ciclos de reloj.
+    
+    Late arrival: cuando el procesador acepta una interrupción empieza a relizar el stacking. Si durante el stacking ocurre un interrupción de mayor prioridad, el procesador la va a atender primero.
+
+17. ¿Qué es el systick? ¿Por qué puede afirmarse que su implementación favorece la portabilidad de los sistemas operativos embebidos?
+
+    El SysTick timer es un contador descendente de 24 bits diseñado para generar interrupciones de manera regular. Se puede acceder a sus registros unicamente de modo privilegiado, lo que lo hace ideal para se utilizado como base de tiempo de un RTOS. Forma parte de los core peripherals definidos por ARM lo que favorece la portabilidad. El clock utilizado puede obtenerse de uno de los clocks del core, o de una fuente externa.
+
+18. ¿Qué funciones cumple la unidad de protección de memoria (MPU)?
+    
+    El MPU es un módulo opcional que pueden incorporar algunos micros, que tiene como función proteger el acceso a la memoria.
+    Sus funciones son:
+    
+    * Proteger el acceso de aplicaciones a zonas de memorias de otras aplicaciones o del kernel.
+    * Evitar la ejecución de código en zonas no permitidas (Ej. en la RAM).
+    * Prevenir acceso de aplicaciones a periféricos sin los permisos correspondientes.
+    
+    Si los permisos de accesos son violados ocurre una excepción de HardFault o  de MemManage según la configuración.
+
+19. ¿Cuántas regiones pueden configurarse como máximo? ¿Qué ocurre en caso de haber solapamientos de las regiones? ¿Qué ocurre con las zonas de memoria no cubiertas por las regiones definidas?
+
+    Pueden configurarse como máximo 8 regiones de memoria. En caso de que ocurra un solapamiento de regiones, la región queda configurada con los permisos de la última zona definida. 
+    
+    El área no cubierta es el área de background y puede no estar permitido el acceso (PRIVDEFENA = 0) o solo permitido en nivel privilegiado (PRIVDEFENA = 1).
+    
+20. ¿Para qué se suele utilizar la excepción PendSV? ¿Cómo se relaciona su uso con el resto de las excepciones? Dé un ejemplo
+    
+    PendSV viene de las siglas "Pendable request for System Service", es una excepción utilizada usualmente por un SO en procesos como un cambio de contexto y system calls. Es la excepción de menor prioridad y es interrumpida por todas las demás.
+
+21. ¿Para qué se suele utilizar la excepción SVC? Expliquelo dentro de un marco de un sistema operativo embebido.
+    
+    La excepción SVC se utiliza con un RTOS donde una tarea de aplicación que se ejecuta sin privilegios puede solicitar servicios del sistema operativo, que se ejecuta con privilegios. El mecanismo de excepción de SVC proporciona el cambio de no privilegiado a privilegiado.
