@@ -7,7 +7,7 @@ Preguntas orientadoras
 
     * Cortex A (Application): son procesadores de alto rendimiento orientados a la implementación de sistemas operativos en sistemas embebidos de alta performance. Se encuentra en celulares, tablets, etc. 
     
-    * Cortex R (Real time): son procesadores orientados a sistemas de tiempo real donde se nesecita implementar soluciones de baja latencia y alta capacidad de procesamiento.
+    * Cortex R (Real time): son procesadores orientados a sistemas de tiempo real donde se necesita implementar soluciones de baja latencia y alta capacidad de procesamiento.
     
     * Cortex M (Microcontrollers): son procesadores optimizados para circuitos integrados de bajo costo y eficiencia energética.
 
@@ -44,3 +44,75 @@ Cortex M
     * El espacio de stack para cada tarea solamente necesita cubrir el máximo uso de stack más un nivel de stack frame. Ya que el espacio de stack que se necesita para una ISR y el manejo de interrupciones anidadas se encuentra asignado solamente en el stack principal
     
     * Un SO también puede utilizar la MPU para definir la región del stack que puede usar una tarea de una aplicación. Si ocurre un problema de desbordamiento de stack, la MPU puede activar una excepción de falla MemManage y evitar que la tarea sobrescriba regiones de memoria fuera del espacio de stack asignado para esta tarea.
+
+6. Describa los diferentes modos de privilegio y operación del Cortex M, sus relaciones y como se conmuta de uno al otro. Describa un ejemplo en el que se pasa del modo privilegiado a no privilegiado y nuevamente a privilegiado.
+    
+    Los Cortex-M tienen dos estados de operación y dos modos de operación.
+    
+    Estados de operación 
+    --------------------
+    * Thumb state: Cuando el procesador está corriendo código de programa. 
+    
+    * Debug state: Cuando el procesador es detenido (Ej: por el depurador o al llegar a un breakpoint), entra en el modo depuración y detiene la ejecución de instrucciones.
+    
+    Modos de operación 
+    ------------------
+    * Thread mode: Cuando está ejecutando código de aplicación normal. Dentro de este modo el procesador puede estar en nivel de acceso privilegiado o no privilegiado. Acceso no privilegiado significa que algunas regiones de memoria son inaccesibles y algunas operaciones no pueden utilizarse. 
+    
+    * Handler mode: Cuando está ejecutando un manejo de excepción como es una ISR.
+    
+    El software puede cambiar el procesador en el modo Thread privilegiado al modo de Thread no privilegiado. Sin embargo, no puede volver del modo no privilegiado al modo privilegiado. Para realizar esta operación, el procesador debe utilizar el mecanismo de excepción, es decir pasar a través del modo Handler. 
+    
+    Por ejemplo por defecto los procesador Cortex-M inicial en modo Thread privilegiado, si en este modo escribo un 1 en el bit 0 del registro CONTROL cambio al modo no privilegiado. La única forma de volver a modo privilegiado o de realizar cualquier cambio que requiera modo privilegiado, es invocar por software a la interrupción SVC (Supervisor Call) utilizando la instrucción de assembler svc. Esta interrupción generada será atendida por la función que defina como SVC_Handler y dentro de la misma puedo borrar el bit 0 del registro CONTROL para volver al modo privilegiado.
+
+7. ¿Qué se entiende por modelo de registros ortogonal? Dé un ejemplo
+
+    En una arquitectura ortogonal cualquier instrucción puede utilizar cualquier registro de la arquitectura como fuente o destino.
+
+    Un set de instrucciones es ortogonal cuando las instrucciones pueden combinar operaciones, tipos de datos y modos de direccionamiento sin restricciones.
+    
+8. ¿Qué ventajas presenta el uso de instrucciones de ejecución condicional (IT)? Dé un ejemplo
+    
+    Evita saltos que rompen el pipeline, lo que permite que la ejecución del código sea más dinámica. Por ejemplo si debo colocar un valor u otro en una variable, pongo las dos instrucciones con una ejecución condicional y según el estado de la flag correspondiente se ejecuta una u otra instrucción.
+
+9. Describa brevemente las excepciones más prioritarias (reset, NMI, Hardfault).
+    
+    Estas 3 excepciones son las únicas que no pueden modificarse su prioridad.
+    
+    * Reset: cuando el procesador inicia ejecuta un handle de reset. Tiene una prioridad de -3 (La más alta)
+    
+    * NMI: interrupción no enmascarable. Puede ser generada por un periférico dentro del chip o por una fuente externa. Tiene una prioridad de -2.
+    
+    * Hardfault: excepción genérica para atender cualquier otro tipo de falta si el handler correspondiente no se encuentra habilitado. Tiene una prioridad de -1.
+
+10. Describa las funciones principales de la pila. ¿Cómo resuelve la arquitectura el llamado a funciones y su retorno?
+    
+    * Guardar el temporalmente el estado de los registros cuando una función necesita utilizarlo para el procesamiento de datos. Luego se pueden restaurar al final de la función.
+    
+    * Guardar variable locales.
+    
+    * Pasar información a funciones o subrutinas.
+    
+    * Guardar el estado del procesador y el valor de los registros cuando ocurre una interrupción.
+    
+    Al comienzo de la llamada a la función, el contenido de algunos de los registros se puede guardar en la pila usando la instrucción PUSH y luego restaurar a sus valores originales al final de la función usando la instrucción POP.
+
+11. Describa la secuencia de reset del microprocesador.
+
+    Después del reinicio y antes de que el procesador comience a ejecutar el programa, los procesadores Cortex-M leen las dos primeras palabras de la memoria. Son el valor inicial del MSP y la dirección del reset handler. Después de esto, el procesador configura el MSP y el contador de programa (PC) con estos valores.
+    
+12. ¿Qué entiende por “core peripherals”? ¿Qué diferencia existe entre estos y el resto de los periféricos?
+
+    Los core peripherals son los periféricos que define ARM para la arquitectura de Cortex-M y son estándar en todos los fabricantes. Estos son el SysTick y el NVIC. El resto de los periféricos varia con cada fabricante.
+
+13. ¿Cómo se implementan las prioridades de las interrupciones? Dé un ejemplo
+
+    En los procesadores Cortex-M cada excepción tiene un nivel de prioridad. Los números más bajos son los de mayor prioridad.
+    Las excepciones reset, NMI y Hardfault tienen las prioridades más altas, no modificables, -3,-2 y -1 respectivamente. El resto de las excepciones tiene su prioridad configurable por software mediante registros en el SCB o en el Nested Vectored Interrupt Controller (NVIC), comenzando con el valor 0 hasta el 255.
+    
+14. ¿Qué es el CMSIS? ¿Qué función cumple? ¿Quién lo provee? ¿Qué ventajas aporta?
+    CMSIS o Cortex Microcontroller Software Interface Standard es una capa de abstracción de Hardware para los procesadores Cortex-M que provee ARM. Es un estándar que nos asegura portabilidad entre los distintos fabricantes que deben cumplirlo.
+
+15. Cuando ocurre una interrupción, asumiendo que está habilitada ¿Cómo opera el microprocesador para atender a la subrutina correspondiente? Explique con un ejemplo
+    
+    Cuando ocurre una excepción el procesador guarda los registros R0 a R3, R12, PC, PSR y LR en el stack. Luego se ingresa al handler de excepción, se carga LR con un valor especial que no corresponde a una posición valida de memoria. Cuando se ejecuta la instrucción de retorno el procesador identifica que se trata de un retorno de excepción y recupera del stack los registros guardados.
