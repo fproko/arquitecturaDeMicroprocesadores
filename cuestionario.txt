@@ -154,3 +154,25 @@ Cortex M
 21. ¿Para qué se suele utilizar la excepción SVC? Expliquelo dentro de un marco de un sistema operativo embebido.
     
     La excepción SVC se utiliza con un RTOS donde una tarea de aplicación que se ejecuta sin privilegios puede solicitar servicios del sistema operativo, que se ejecuta con privilegios. El mecanismo de excepción de SVC proporciona el cambio de no privilegiado a privilegiado.
+
+ISA
+===
+1. ¿Qué son los sufijos y para qué se los utiliza? Dé un ejemplo
+    
+    Son letras que se agregan al final de un instrucción para modificar su funcionalidad. Por ejemplo a la instrucción de cargar un registro con un valor ldr, se le puede agregar el sufijo b es decir ldrb para cargar media palabra (16 bits) y completar los bits superiores con 0.
+
+2. ¿Para qué se utiliza el sufijo ‘s’? Dé un ejemplo
+    
+    Se utiliza para que según el resultado de la operación se actualicen las flags del registro APSR. Por ejemplo subs r2,1 resta 1 a r2 y actualiza la flag z si el resultado es 0.
+
+3. ¿Qué utilidad tiene la implementación de instrucciones de aritmética saturada? Dé un ejemplo con operaciones con datos de 8 bits.
+    
+    Las instrucciones de aritmética saturada permiten reducir un valor de 32-bits a un formato más chico, por ejemplo 12 bits, saturando el resultado dentro del rango permitido. Por ejemplo usat r4,8,r4 satura sin signo a la posición 8 es decir a 8 bits.
+
+4. Describa brevemente la interfaz entre assembler y C ¿Cómo se reciben los argumentos de las funciones? ¿Cómo se devuelve el resultado? ¿Qué registros deben guardarse en la pila antes de ser modificados?
+
+    La interfaz entre assembler y C en el Cortex se define en el documento “ARM Architecture Procedure Call Standard”. Las funciones reciben los argumentos a través de los registros r0 (para arg 0), r1, r2 y r3. r0 se utiliza para devolver el resultado de la función. A partir del registro r5 a 15 deben ser guardados en la pila antes de ser modificados con push {r5-r15} y devueltos al final de la función con un pop {r5-r15}.
+    
+5. ¿Qué es una instrucción SIMD? ¿En qué se aplican y que ventajas reporta su uso? Dé un ejemplo.
+
+    SIMD viene de las siglas "Single Instruction Multiple Data". Una instrucción de este tipo permite procesar múltiples datos en una única operación. La aplicación más común es en el procesamiento de audio, donde los cálculos para el canal izquierdo y el canal derecho se pueden realizar al mismo tiempo.
