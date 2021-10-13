@@ -82,3 +82,18 @@ void c_pack32to16 (int32_t * vectorIn, int16_t *vectorOut, uint32_t longitud)
 		vectorOut[i] = (uint16_t)(vectorIn[i]>>16); // Se descarta la parte alta del vector de 32 bits
 	}
 }
+
+int32_t c_max (int32_t * vectorIn, uint32_t longitud)
+{
+    int32_t mayor = vectorIn[0];
+    int32_t pos_mayor = 0;
+    for (uint8_t i = 0; i < longitud; i++)
+    {
+        if(vectorIn[i]>mayor)
+        {
+            mayor = vectorIn[i];
+            pos_mayor = i;
+        }
+    }
+    return pos_mayor;
+}

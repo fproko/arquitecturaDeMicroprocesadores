@@ -28,6 +28,15 @@ void SysTick_Handler (void)
     ++ s_ticks;
 }
 
+static void max(void)
+{
+    int32_t c_pos_max=0;
+    int32_t asm_pos_max=0;
+    uint32_t vectorIn1[8] = {-55,2,-3,100,-5,200,-7,8};
+    asm_pos_max=asm_max(vectorIn1,8);
+    c_pos_max=c_max(vectorIn1,8);
+}
+
 static void pack32to16(void)
 {
     uint32_t vectorIn1[8] = {-999999999,2,-3,4,-5,6,-7,8};
@@ -219,7 +228,9 @@ int main (void)
 
     //filtroVentana10(); //Ejercicio 5
 
-    pack32to16(); //Ejercicio 6
+    //pack32to16(); //Ejercicio 6
+
+    max(); //Ejercicio 7
 
     //Suma ();
 

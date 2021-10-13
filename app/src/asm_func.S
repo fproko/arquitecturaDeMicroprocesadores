@@ -12,6 +12,7 @@
 .global asm_productoEscalar12_sat
 .global asm_filtroVentana10
 .global asm_pack32to16
+.global asm_max
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -252,3 +253,36 @@
         subs r2, 1              @ Decremento el contador
         bne .loop_pack32to16
     bx lr                       @ para realizar un salto hacia afuera
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   int32_t asm_max (int32_t * vectorIn, uint32_t longitud)
+@
+@ Parametros recibidos:
+@   r0: *vector
+@   r1: longitud
+@
+@ Registros utilizados
+@   r2: mayor 
+@   r3: pos_mayor
+@   r5: copia de la longitud
+
+.thumb_func
+    asm_max:
+    push {r4-r5}
+    mov r5, r1          @ guardo copia de longitud para utilizarlo como indice
+    mov r3, r1          @ posición del ultimo elemento 
+    ldr r4,[r0],+4      @ cargo vectorIn[0] en r4 y luego a r0 lo incremento 4
+    subs r5,1           @ --longitud
+    .loop_max:          @ etiqueta para el salto 
+        ldr r2,[r0],+4  @ cargo vectorIn[1] en r2 y luego a r0 lo incremento 4
+        cmp r4,r2       @ comparo mayor<vectorIn[i]
+        bge .not_max    @ salto si valor actual es el máximo
+        mov r4,r2       @ guardo nuevo máximo
+        mov r3,r5       @ guardo valor del contador
+        .not_max:
+        subs r5,1       @ --longitud
+        bne .loop_max   @ realiza el salto mientras el flag z!=0, esto lo determina la instrucción anterior
+    sub r0,r1,r3        @ obtengo posición con la ayuda del contador que guarde y con el valor de longitud
+    pop {r4-r5}
+    bx lr           @ para realizar un salto hacia afuera
