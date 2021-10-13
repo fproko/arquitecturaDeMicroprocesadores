@@ -28,6 +28,15 @@ void SysTick_Handler (void)
     ++ s_ticks;
 }
 
+static void filtroVentana10(void)
+{
+    uint16_t vectorIn1[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+    uint16_t vectorOut1[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    uint16_t vectorOut2[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    asm_filtroVentana10(vectorIn1, vectorOut1, 16);
+    c_filtroVentana10(vectorIn1, vectorOut2, 16);
+}
+
 static void productoEscalar12(void)
 {
     uint16_t vectorIn1[8] = {1,2,3,4,5,6,7,8};
@@ -197,7 +206,9 @@ int main (void)
 
     //productoEscalar16(); //Ejercicio 3
 
-    productoEscalar12(); //Ejercicio 4
+    //productoEscalar12(); //Ejercicio 4
+
+    filtroVentana10(); //Ejercicio 5
 
     //Suma ();
 

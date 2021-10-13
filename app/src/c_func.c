@@ -51,3 +51,26 @@ void c_productoEscalar12(uint16_t *vectorIn, uint16_t *vectorOut, uint32_t longi
         }
     }
 }
+
+void c_filtroVentana10(uint16_t *vectorIn, uint16_t *vectorOut, uint32_t longitudVectorIn)
+{
+#define VENTANA 10
+    uint32_t max = 0;
+    uint32_t aux = 0;
+    for (uint32_t i = 0; i < longitudVectorIn; i++)
+    {
+        if (i + VENTANA > longitudVectorIn)
+        {
+            max = longitudVectorIn;
+        }
+        else
+        {
+            max = i + VENTANA;
+        }
+        for (uint32_t j = i; j < max; j++)
+        {
+            aux += vectorIn[j];
+        }
+        vectorOut[i] = aux / VENTANA;
+    }
+}
