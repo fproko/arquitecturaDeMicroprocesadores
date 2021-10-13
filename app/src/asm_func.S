@@ -13,6 +13,7 @@
 .global asm_filtroVentana10
 .global asm_pack32to16
 .global asm_max
+.global asm_invertir
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -286,3 +287,29 @@
     sub r0,r1,r3        @ obtengo posición con la ayuda del contador que guarde y con el valor de longitud
     pop {r4-r5}
     bx lr           @ para realizar un salto hacia afuera
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   void asm_invertir (uint16_t * vector, uint32_t longitud)
+@
+@ Parametros recibidos:
+@   r0: *vector
+@   r1: longitud
+
+.thumb_func
+asm_invertir:
+    push {r4}
+    mov r2, 2                   
+    mul r2, r1                  @ largo en bytes, equivalente a multiplicar por 2 la longitud
+    add r2, r0                  @ direccion fin de vector (r0 + largo en bytes)
+    sub r2, 2                   @ direccion de ultimo elemento del vector
+    lsr r1, 1                   @ divido longitud por 2
+    .loop_invertir:  
+        ldrh r4, [r2]           @ guardo parte alta del vector     
+        ldrh r3, [r0]           @ guardo parte baja del vector
+        strh r3, [r2],-2        @ intercambio, y decremento r2-=2
+        strh r4, [r0],+2        @ intercambio, y incremento r0+=2
+        subs r1, 1              @ longitud/2 - 1 
+        bne .loop_invertir      
+    pop	{r4}                    
+    bx lr  

@@ -97,3 +97,14 @@ int32_t c_max (int32_t * vectorIn, uint32_t longitud)
     }
     return pos_mayor;
 }
+
+void c_invertir (uint16_t * vector, uint32_t longitud)
+{
+    uint16_t temp;
+    for (uint16_t i = 0; i < longitud / 2; i++)
+    {
+        temp = vector[i];
+        vector[i] = vector[(longitud - 1) - i];
+        vector[(longitud - 1) - i] = temp;
+    }
+}

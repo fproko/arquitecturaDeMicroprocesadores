@@ -28,6 +28,15 @@ void SysTick_Handler (void)
     ++ s_ticks;
 }
 
+static void invertir(void)
+{
+    uint16_t vectorIn1[7] = {55,2,3,100,5,200,7};
+    uint16_t vectorIn2[7] = {55,2,3,100,5,200,7};
+    asm_invertir(vectorIn1,7);
+    c_invertir(vectorIn2,7);
+
+}
+
 static void max(void)
 {
     int32_t c_pos_max=0;
@@ -230,7 +239,9 @@ int main (void)
 
     //pack32to16(); //Ejercicio 6
 
-    max(); //Ejercicio 7
+    //max(); //Ejercicio 7
+
+    invertir(); //Ejercicio 9
 
     //Suma ();
 
