@@ -11,6 +11,7 @@
 .global asm_productoEscalar12
 .global asm_productoEscalar12_sat
 .global asm_filtroVentana10
+.global asm_pack32to16
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -189,6 +190,8 @@
 @   r1: *vectorOut
 @   r2: logitud
 @   r3: acumulador
+@
+@ Parametros de función
 @   r4: variable i 
 @   r5: variable j
 @   r6: ventana
@@ -227,3 +230,25 @@
         blo .loop_externo       @ salta si es menor
     pop {r4-r9}                 @ restablece r4-r8
     bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   void asm_pack32to16 (int32_t * vectorIn, int16_t *vectorOut, uint32_t longitud)
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut
+@   r2: logitud
+@
+@ Parametros de función
+@   r3: aux
+.thumb_func
+    asm_pack32to16:
+@ Realizo un loop decrementando el valor de longitud
+    .loop_pack32to16:           @ etiqueta para el salto
+        ldr r3, [r0],4          @ Cargo *vectorIn en r3, y luego incremento 4
+        lsr r3, 16              @ r3 >> 16 y lo guardo en r3
+        strh r3, [r1],2         @ Cargo valor de r3 a la dirección apuntada por r0, y luego incremendo en 2 la diección de r1
+        subs r2, 1              @ Decremento el contador
+        bne .loop_pack32to16
+    bx lr                       @ para realizar un salto hacia afuera
