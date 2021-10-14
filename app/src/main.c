@@ -32,6 +32,11 @@ void SysTick_Handler (void)
     ++ s_ticks;
 }
 
+void eco(void)
+{
+
+}
+
 static void invertir(void)
 {
     printf("\n\rEjercicio 9:\n\r");
@@ -304,6 +309,8 @@ int main (void)
 
     invertir(); //Ejercicio 9
 
+    eco(); //Ejercicio 10
+    
     //Suma ();
 
     //PrivilegiosSVC ();
