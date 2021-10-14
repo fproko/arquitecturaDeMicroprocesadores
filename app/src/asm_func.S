@@ -14,6 +14,9 @@
 .global asm_pack32to16
 .global asm_max
 .global asm_invertir
+@ .global asm_asm_eco
+@ .global asm_asm_ecoSIMD
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -312,4 +315,12 @@ asm_invertir:
         subs r1, 1              @ longitud/2 - 1 
         bne .loop_invertir      
     pop	{r4}                    
-    bx lr  
+    bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   void asm_ecoSIMD (int16_t * vectorIn, int16_t * vectorOut1)
+@
+@ Parametros recibidos:
+@   r0: *vectorIn
+@   r1: *vectorOut1

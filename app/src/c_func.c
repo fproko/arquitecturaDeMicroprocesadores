@@ -108,3 +108,14 @@ void c_invertir (uint16_t * vector, uint32_t longitud)
         vector[(longitud - 1) - i] = temp;
     }
 }
+
+void c_eco(int16_t *vectorIn, int16_t *vectorOut)
+{
+    #define LONG_VECTOR         4096
+    #define MUESTRAS_EN_20MS	882     //porque se toman 44,1 muestras/ms
+
+    for (uint16_t i = LONG_VECTOR; i > MUESTRAS_EN_20MS; i--)
+    {
+        *(vectorOut + i) = *(vectorIn + i) + (*(vectorIn + i - MUESTRAS_EN_20MS)) / 2;
+    }
+}
