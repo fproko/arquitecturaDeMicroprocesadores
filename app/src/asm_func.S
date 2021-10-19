@@ -14,8 +14,8 @@
 .global asm_pack32to16
 .global asm_max
 .global asm_invertir
-@ .global asm_asm_eco
-@ .global asm_asm_ecoSIMD
+@ .global asm_eco
+.global asm_ecoSIMD
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -319,8 +319,28 @@ asm_invertir:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
-@   void asm_ecoSIMD (int16_t * vectorIn, int16_t * vectorOut1)
+@   void asm_ecoSIMD (int16_t * vectorIn)
 @
 @ Parametros recibidos:
 @   r0: *vectorIn
-@   r1: *vectorOut1
+@
+.thumb_func
+asm_ecoSIMD:
+    push {r4-r5}
+    mov r1, 4096           @longitud
+    sub r1, 2              @longitud-2
+    mov r2, 882            @eco
+    mov r5, 0
+    add r0, r0, r1, lsl 1  @ r0=r0+r1<<1
+    sub r2, r0, r2, lsl 1  @ r2=r0+r2<<1
+    sub r1, 882
+    .loopSIMD:
+        ldr r3, [r0]       @ r3=*r0
+        ldr r4, [r2], -4   @ r4=*r2 ; r2-=4
+        shadd16 r4, r4, r5 @ r4/2
+        sadd16 r3, r3, r4  @ sumo la muestra con el eco
+        str r3, [r0], -4   @ *r0 = r3; r0-=4
+        subs r1, 2         @ r1=r1-2 con actualización de flag
+        bne .loopSIMD
+    pop {r4-r5}
+    bx lr

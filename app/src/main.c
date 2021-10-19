@@ -35,26 +35,26 @@ void SysTick_Handler (void)
 void eco(void)
 {
     printf("\n\rEjercicio 10:\n\r");
-	static int16_t vectorIn1[4096] , vectorIn2[4096], vectorIn3[4096];
+    int16_t vectorIn1[4096], vectorIn2[4096], vectorIn3[4096];
 
-	for( uint16_t i = 0 ; i < 4096 ; i++)
-	{
-		vectorIn1[i] = i ;
-		vectorIn2[i] = i ;
-		vectorIn3[i] = i ;
-	}
+    for( uint16_t i = 0 ; i < 4096 ; i++)
+    {
+	vectorIn1[i] = i;
+	vectorIn2[i] = i;
+	vectorIn3[i] = i;
+    }
 
 	// RESET_CYCLES;
 	// asm_eco(vectorIn1);
 	// printf("Eco ASM : %d ciclos\n\r", GET_CYCLES);
 
-	// RESET_CYCLES;
-	// asm_ecoSIMD(vectorIn2);
-    // printf("Eco ASM SIMD : %d ciclos\n\r", GET_CYCLES);
+    RESET_CYCLES;
+    asm_ecoSIMD(vectorIn2);
+    printf("Eco ASM SIMD : %d ciclos\n\r", GET_CYCLES);
 
-	RESET_CYCLES;
-	c_eco(vectorIn3);
-	printf("Eco C : %d ciclos\n\r", GET_CYCLES);
+    RESET_CYCLES;
+    c_eco(vectorIn3);
+    printf("Eco C : %d ciclos\n\r", GET_CYCLES);
 }
 
 static void invertir(void)
